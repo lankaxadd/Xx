@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="form-box">
+<h2>Login</h2>
+
+<input type="email" id="email" placeholder="Email">
+<input type="password" id="password" placeholder="Password">
+
+<button onclick="loginUser()">Login</button>
+</div>
+
+<script type="module">
+
+import app from './firebase-config.js';
+
+import {
+getAuth,
+signInWithEmailAndPassword
+} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+
+import {
+getFirestore,
+doc,
+getDoc
+} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+window.loginUser = async function(){
+
+const email = document.getElementById('email').value;
+const password = document.getElementById('password').value;
+
+if(email === 'admin@gmail.com' && password === '1234'){
+window.location='admin.html';
+return;
+}
+
+try{
+
+const userCredential = await signInWithEmailAndPassword(auth,email,password);
+
+const uid = userCredential.user.uid;
+
+const userDoc = await getDoc(doc(db,'users',uid));
+
+const data = userDoc.data();
+
+if(data.role === 'seller'){
+window.location='seller.html';
+}else{
+window.location='customer.html';
+}
+
+}catch(error){
+alert(error.message);
+}
+
+}
+</script>
+
+</body>
+</html>

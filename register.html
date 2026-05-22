@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Register</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="form-box">
+<h2>Register</h2>
+
+<input type="email" id="email" placeholder="Email">
+<input type="password" id="password" placeholder="Password">
+
+<select id="role">
+<option value="seller">Seller</option>
+<option value="customer">Customer</option>
+</select>
+
+<button onclick="registerUser()">Register</button>
+</div>
+
+<script type="module">
+import app from './firebase-config.js';
+
+import {
+getAuth,
+createUserWithEmailAndPassword
+} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+
+import {
+getFirestore,
+setDoc,
+doc
+} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+window.registerUser = async function(){
+
+const email = document.getElementById('email').value;
+const password = document.getElementById('password').value;
+const role = document.getElementById('role').value;
+
+try{
+
+const userCredential = await createUserWithEmailAndPassword(auth,email,password);
+
+await setDoc(doc(db,'users',userCredential.user.uid),{
+email,
+role
+});
+
+alert('Registration Successful');
+window.location='login.html';
+
+}catch(error){
+alert(error.message);
+}
+
+}
+</script>
+
+</body>
+</html>
